@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
   }
   
+  const http = require("http")
   const express = require('express')
   const app = express()
   const bcrypt = require('bcrypt')
@@ -86,10 +87,12 @@ works = []
 
   app.get('/clientdashboard', checkAuthenticatedClient, (req, res) => {
     // workers = users.filter(user => user.role === "worker")
-    context = {clientuname: req.user.username, mob: req.user.mobile}
+    hisworks = works.filter(work => {return (work.client == req.user) & (work.status == "") })
+    context = {clientuname: req.user.username, mob: req.user.mobile, hisworks:hisworks}
 
     res.render("clientdashboard.ejs", context)
   })
+
 
   app.post("/addwork", checkAuthenticatedClient, (req, res)=>{
     works.push(
@@ -99,19 +102,32 @@ works = []
         category: req.body.category,
         price: req.body.price,
         desc: req.body.desc,
+        worker: {},
         status:""
       }
     )
 
-    console.log(works)
     res.redirect("/clientdashboard")
+  })
+
+
+  app.post("/removework", checkAuthenticatedWorker, (req, res) =>{
+    toremove = works.find(work =>{return work.id == req.body.remove })
+    toremove.worker = {}
+    toremove.status = ""
+    res.redirect("/workerdashboard")
+  })
+
+  app.post("/removework_client", checkAuthenticatedClient, (req, res) =>{
+    works = works.filter(work =>{return work.id != req.body.remove })
+   
+    res.redirect("/workerdashboard")
   })
 
   app.post("/applywork", checkAuthenticatedWorker, (req, res)=>{
     work = works.find(work => work.id === req.body.workid)
     work.worker = req.user
     work.status = "pending"
-    console.log(works)
     res.redirect("/workerdashboard")
   })
 
@@ -127,7 +143,8 @@ works = []
     activeworks = works.filter(work => {
       return work.status == ""
     })
-    context ={works: activeworks, workeruname: req.user.username, mob: req.user.mobile}
+    hisworks = works.filter(work => {return (work.worker == req.user) & (work.status == "pending") })
+    context ={works: activeworks, workeruname: req.user.username, mob: req.user.mobile, hisworks:hisworks}
 
     res.render("workerdashboard.ejs", context)
   })
@@ -197,7 +214,6 @@ works = []
 
       }
     }
-    console.log(users)
   })
   
   app.delete('/logout', function(req, res, next) {
@@ -237,6 +253,32 @@ works = []
     next()
   }
   
-  app.listen(3000, ()=>{
+
+// socket io 
+const server = http.createServer(app)
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: ["http://localhost:3000/"],
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on("connection", socket =>{
+      socket.on("new-user-joined", name =>{
+        users[socket.id] = name
+        socket.broadcast.emit("user-joined", name)
+    })
+
+    socket.on("send", message =>{
+      socket.broadcast.emit("recieve", {message : message, name : users[socket.id]})
+    })
+
+    socket.on("disconnect", ()=>{
+      socket.broadcast.emit("user-left", users[socket.id])
+    })
+})
+
+server.listen(3000, ()=>{
     console.log("App here: http://localhost:3000/")
 })
