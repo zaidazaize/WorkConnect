@@ -77,9 +77,17 @@ works = []
   app.use(methodOverride('_method'))
   
 
+
+  app.post("/client_profile", checkAuthenticatedClient, (req, res) =>{
+    req.user.mobile = req.body.mobile
+
+    res.redirect("/clientdashboard")
+  })
+
   app.get('/clientdashboard', checkAuthenticatedClient, (req, res) => {
     // workers = users.filter(user => user.role === "worker")
-    context = {name: req.user.username}
+    context = {clientuname: req.user.username, mob: req.user.mobile}
+
     res.render("clientdashboard.ejs", context)
   })
 
@@ -89,7 +97,9 @@ works = []
         id: Date.now().toString(),
         client: req.user,
         category: req.body.category,
-        price: req.body.price
+        price: req.body.price,
+        desc: req.body.desc,
+        status:""
       }
     )
 
@@ -100,13 +110,24 @@ works = []
   app.post("/applywork", checkAuthenticatedWorker, (req, res)=>{
     work = works.find(work => work.id === req.body.workid)
     work.worker = req.user
+    work.status = "pending"
     console.log(works)
     res.redirect("/workerdashboard")
   })
 
-  app.get('/workerdashboard', checkAuthenticatedWorker, (req, res) => {
+  app.post("/worker_profile", checkAuthenticatedWorker, (req, res) =>{
+    req.user.mobile = req.body.mobile
+    req.user.category = req.body.category
 
-    context ={works: works}
+    res.redirect("/workerdashboard")
+  })
+
+
+  app.get('/workerdashboard', checkAuthenticatedWorker, (req, res) => {
+    activeworks = works.filter(work => {
+      return work.status == ""
+    })
+    context ={works: activeworks, workeruname: req.user.username, mob: req.user.mobile}
 
     res.render("workerdashboard.ejs", context)
   })
