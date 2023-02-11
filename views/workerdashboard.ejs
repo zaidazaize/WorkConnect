@@ -3,8 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Client Dashboard</title>
+    <title>Worker Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   </head>
   
   <body style="height:100vh">    
@@ -17,15 +19,19 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center">
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/">Home</a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/"><ion-icon name="notifications-circle-outline" style="font-size: 1.5rem;"></ion-icon></a>
                   </li>
                   
                 </ul>
                 <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
                   <li class="nav-item ml-auto">
-                    <a class="nav-link active" href="#">Profile</a>
+                    <a class="nav-link active" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile</a>
                   </li>
                   <li class="nav-item ml-auto">
                     <form action="/logout?_method=DELETE" method="post">
@@ -41,6 +47,51 @@
           </nav>
 
 
+            <!-- modal for profile -->
+        <!-- Button trigger modal -->
+
+        <!-- Modal -->
+        <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Your Profile</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action = '/worker_profile' method="post" id = "signup-form">
+              
+              
+                  <div class="form-floating">
+                    <input type="text" class="form-control my-1" id="floatingInput" name = "username" value="<%= locals.workeruname %>" placeholder="Username" readonly required>
+                    <label for="floatingInput">Username</label>
+                  </div>
+                  
+                  <div class="form-floating">
+                    <input type="text" class="form-control my-1" id="floatingInput2" name = "mobile" value="<%= locals.mob  %>" placeholder="Mobile" required>
+                    <label for="floatingInput">Mobile</label>
+                  </div>
+              
+                  <select class="form-select mb-3" aria-label="Default select example" name="category" required>
+                    <option value="">Select Work Category</option>
+                    <option value="AC/Refrigerator">AC/Refrigerator</option>
+                    <option value="Mobile Phones">Mobile Phones</option>
+                    <option value="Laptops">Laptops</option>
+                  </select>
+              
+                  <button class="w-100 btn btn-lg btn-primary my-1" type="submit">Save Changes</button>
+              
+              
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- works -->
          <div class="container d-flex flex-wrap justify-content-evenly">
           <% for(i=0; i<locals.works.length; i++){ %>
             <div class="card m-2" style="width: 18rem;">
@@ -49,7 +100,7 @@
                 <h5 class="card-title"><%= locals.works[i].category %></h5>
                 <p class="card-text">Person: <%= locals.works[i].client.username %></p>
                 <p class="card-text">Price Offered: <%= locals.works[i].price %></p>
-                <a href="#" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal<%= i %>">Add Work</a>
+                <a href="#" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal<%= i %>">Show</a>
               </div>
             </div>
             <div class="modal fade" id="exampleModal<%= i  %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -77,8 +128,17 @@
                           <input type="text" class="form-control my-1" id="floatingInput3" value="<%= locals.works[i].client.mobile  %>" name = "client" placeholder="client" required readonly>
                           <label for="floatingInput">Mobile</label>
                         </div>
-                    
-                    
+
+                        <div class="form-floating">
+                          <input type="text" class="form-control my-1" id="floatingInput4" value="<%= locals.works[i].price  %>" name = "price" placeholder="client" required readonly>
+                          <label for="floatingInput">Offered Price</label>
+                        </div>
+                        <div class="form-floating">
+                          <input type="text" class="form-control my-1" id="floatingInput5" value="<%= locals.works[i].desc  %>" name = "desc" placeholder="desc" required readonly>
+                          <label for="floatingInput">Description of work</label>
+                        </div>
+                        
+                        
                         <button class="w-100 btn btn-lg btn-primary my-1" type="submit">Negotiate</button>
                 
                       </form>
