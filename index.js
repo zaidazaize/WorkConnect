@@ -9,7 +9,8 @@ if (process.env.NODE_ENV !== 'production') {
   const flash = require('express-flash')
   const session = require('express-session')
   const methodOverride = require('method-override')
-  
+
+
   const initializePassport = require('./passport-config')
   initializePassport(
     passport,
@@ -17,10 +18,54 @@ if (process.env.NODE_ENV !== 'production') {
     id => users.find(user => user.id === id)
   )
   
-  const users = []
-  
+users = [
+  {
+    id: '1676108978763',
+    role: 'client',
+    username: 'a',
+    password: '$2b$10$m1iAb1BTsP/m.9u5BhnjHO7GBXqAqiYl09Gqmjfv9uUdtU.WeqObu',
+    category: undefined,
+    mobile: '1'
+  },
+  {
+    id: '1676109102078',
+    role: 'client',
+    username: 'b',
+    password: '$2b$10$482i9oUyJzuc6vptyHaLQuwfipvspAtsOIBXdXRq6p.tn/9HM9wJ.',
+    category: undefined,
+    mobile: '2'
+  },
+  {
+    id: '1676109152819',
+    role: 'worker',
+    username: 'c',
+    password: '$2b$10$mQx1LTFeQVP3O2BYFwyUD.DU1W6V28lcgckMIXiDAlsuBBMtUx3fS',
+    category: 'AC/Refrigerator',
+    mobile: '3'
+  },
+  {
+    id: '1676109176599',
+    role: 'worker',
+    username: 'd',
+    password: '$2b$10$rdrxvQ7zVNIvMoCIdG8fnearGkz0.bxfn35gpvxybekZ3lm3AVO1K',
+    category: 'Mobile Phones',
+    mobile: '4'
+  },
+  {
+    id: '1676109202811',
+    role: 'worker',
+    username: 's',
+    password: '$2b$10$TXu5Y50doKCAeQgxO3a/Tes0tWvQQD/E/.24vyubYAPdO77988IfC',
+    category: 'Laptops',
+    mobile: '5'
+  }
+]
+
+works = []
+
   app.set('view-engine', 'ejs')
   app.use(express.urlencoded({ extended: false }))
+  app.use(express.static("public"))
   app.use(flash())
   app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -31,58 +76,142 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(passport.session())
   app.use(methodOverride('_method'))
   
-  app.get('/userdashboard', checkAuthenticated, (req, res) => {
-    res.send("userdash")
+
+  app.get('/clientdashboard', checkAuthenticatedClient, (req, res) => {
+    // workers = users.filter(user => user.role === "worker")
+    context = {name: req.user.username}
+    res.render("clientdashboard.ejs", context)
   })
-  app.get('/', checkAuthenticated, (req, res) => {
-    res.redirect("/login")
+
+  app.post("/addwork", checkAuthenticatedClient, (req, res)=>{
+    works.push(
+      {
+        id: Date.now().toString(),
+        client: req.user,
+        category: req.body.category,
+        price: req.body.price
+      }
+    )
+
+    console.log(works)
+    res.redirect("/clientdashboard")
+  })
+
+  app.post("/applywork", checkAuthenticatedWorker, (req, res)=>{
+    work = works.find(work => work.id === req.body.workid)
+    work.worker = req.user
+    console.log(works)
+    res.redirect("/workerdashboard")
+  })
+
+  app.get('/workerdashboard', checkAuthenticatedWorker, (req, res) => {
+
+    context ={works: works}
+
+    res.render("workerdashboard.ejs", context)
+  })
+
+
+  app.get('/', checkNotAuthenticated, (req, res) => {
+    res.render("landing.ejs")
   })
   
-  app.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('login.ejs')
+  app.get('/loginworker', checkNotAuthenticated, (req, res) => {
+    res.render('loginworker.ejs')
   })
   
-  app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+  app.get('/loginclient', checkNotAuthenticated, (req, res) => {
+    res.render('loginclient.ejs')
+  })
+  
+  app.post('/loginworker', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/',
-    failureRedirect: '/login',
+    failureRedirect: '/loginworker',
+    failureFlash: true
+  }))
+
+  app.post('/loginclient', checkNotAuthenticated, passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/loginclient',
     failureFlash: true
   }))
   
-  app.get('/signup', checkNotAuthenticated, (req, res) => {
-    res.render('signup.ejs')
+  app.get('/signupworker', checkNotAuthenticated, (req, res) => {
+    res.render('signupworker.ejs')
+  })
+  
+  app.get('/signupclient', checkNotAuthenticated, (req, res) => {
+    res.render('signupclient.ejs')
   })
   
   app.post('/signup', checkNotAuthenticated, async (req, res) => {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password1, 10)
-      users.push({
-        id: Date.now().toString(),
-        username: req.body.username,
-        password: hashedPassword
-      })
-      res.redirect('/login')
+
+        users.push({
+          id: Date.now().toString(),
+          role: req.body.role,
+          username: req.body.username,
+          password: hashedPassword,
+          category : req.body.category, 
+          mobile: req.body.mobile
+        })
+
+      if(req.body.role == "client"){
+        res.redirect('/loginclient')
+
+      }
+      else{
+        res.redirect('/loginworker')
+
+      }
+
     } catch {
-      res.redirect('/signup')
+      if(req.body.role == "client"){
+        res.redirect('/signupclient')
+
+      }
+      else{
+        res.redirect('/signupworker')
+
+      }
     }
     console.log(users)
   })
   
-  app.delete('/logout', (req, res) => {
-    req.logOut()
-    res.redirect('/login')
-  })
+  app.delete('/logout', function(req, res, next) {
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      res.redirect('/');
+    });
+  });
   
-  function checkAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
+  function checkAuthenticatedWorker(req, res, next) {
+    if (req.isAuthenticated() && req.user.role =="worker") {
       return next()
     }
   
-    res.redirect('/login')
+    res.redirect('/')
+  }
+
+  function checkAuthenticatedClient(req, res, next) {
+    if (req.isAuthenticated() && req.user.role =="client") {
+      return next()
+    }
+  
+    res.redirect('/')
   }
   
   function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-      return res.redirect('/userdashboard')
+      if(req.user.role == "client"){
+        return res.redirect('/clientdashboard')
+
+      }
+      else{
+        return res.redirect('/workerdashboard')
+
+      }
     }
     next()
   }
