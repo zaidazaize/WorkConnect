@@ -11,6 +11,7 @@ if (process.env.NODE_ENV !== 'production') {
   const session = require('express-session')
   const methodOverride = require('method-override')
 
+  const { v4: uuidv4 } = require('uuid');
 
   const initializePassport = require('./passport-config')
   initializePassport(
@@ -95,9 +96,21 @@ works = []
 
 
   app.get("/negotiate", checkAuthenticated, (req, res) =>{
-    context = {uname: req.user.username}
-
-    res.render("chat.ejs", context)
+      // room_id = ""
+      if(req.user.role == 'worker'){
+        work = works.find(work =>{ return work.worker == req.user })
+        if(work){
+          context = {uname: req.user.username, room_id: work.room_id}
+          res.render("chat.ejs", context)
+        }
+      }else{
+        work = works.find(work =>{ return work.client == req.user })
+        if(work){
+          context = {uname: req.user.username, room_id: room_id}
+        res.render("chat.ejs", context)
+      }
+    }
+    
   })
 
   app.post("/addwork", checkAuthenticatedClient, (req, res)=>{
@@ -109,7 +122,8 @@ works = []
         price: req.body.price,
         desc: req.body.desc,
         worker: {},
-        status:""
+        status:"",
+        room_id:""
       }
     )
 
@@ -121,6 +135,7 @@ works = []
     toremove = works.find(work =>{return work.id == req.body.remove })
     toremove.worker = {}
     toremove.status = ""
+    toremove.rood_id = ""
     res.redirect("/workerdashboard")
   })
 
@@ -134,6 +149,9 @@ works = []
     work = works.find(work => work.id === req.body.workid)
     work.worker = req.user
     work.status = "pending"
+    room_id = uuidv4()
+    work.room_id = room_id
+    console.log(work)
     res.redirect("/workerdashboard")
   })
 
@@ -278,18 +296,21 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", socket =>{
-      socket.on("new-user-joined", name =>{
-        users[socket.id] = name
-        socket.broadcast.emit("user-joined", name)
+      socket.on("joinroom", room_id=>{
+        socket.join(room_id)
+      })
+
+    //   socket.on("new-user-joined", (username, room_id) =>{
+    //     socket.to(room_id).emit("user-joined", username)
+    // })
+
+    socket.on("send", (message, username, room_id) =>{
+      socket.to(room_id).emit("recieve", {message : message, name : username})
     })
 
-    socket.on("send", message =>{
-      socket.broadcast.emit("recieve", {message : message, name : users[socket.id]})
-    })
-
-    socket.on("disconnect", ()=>{
-      socket.broadcast.emit("user-left", users[socket.id])
-    })
+    // socket.on("disconnect", ()=>{
+    //   socket.to(room_id).emit("user-left", users[socket.id])
+    // })
 })
 
 server.listen(3000, ()=>{
