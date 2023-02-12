@@ -57,10 +57,13 @@
               </div>
               <small id="firstadd" class="text-danger"></small>
             </form>
+
+            <% if(locals.confirm_client) { %>
             <form action="/confirm" class=" p-2" id = "priceform" method="post">
               <input type="hidden" name="confirmwork" value="<%= locals.room_id %>">
               <button class="btn btn-success" id="sendbutton" type="submit">Confirm</button>
             </form>
+            <% } %>
           </div>
         </div>
       </div>
