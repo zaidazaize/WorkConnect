@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Client Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script defer src="/socket.io/socket.io.js"></script>
+    <script defer src="/chat.js"></script>
+    <link rel="stylesheet" href="/chat.css">
+  </head>
+  
+  <body style="height:100vh">    
+
+    <div class="container-fluid p-2 bg-dark h-100">
+        <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary sticky-top" data-bs-theme="dark">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="/">WorkConnect</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center">
+                  <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/">Home</a>
+                  </li>
+                  
+                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                 
+                    <form action="/logout?_method=DELETE" method="post">
+
+                      <button type="submit" class="btn nav-link">Logout</button>
+                    </form>
+                  </li>
+                  
+                </ul>
+                
+              </div>
+            </div>
+          </nav>
+
+<!-- chat app -->
+      <div class="chatcontainer container-sm py-2 bg-light my-3 rounded d-flex flex-column">
+        <div class="header bg-primary p-2 rounded-top text-center text-light h4">Negotiation Window</div>
+        <div class="chats container bg-secondary p-2 mt-2" id="chats">
+
+        </div>
+        <div class="sendform">
+            <form action="#" class="row p-2" id = "chatform">
+              <div class="form-floating col-md-10">
+                <input type="text" class="form-control my-1" name = "message" id = "message" placeholder="Enter a message">
+                <label for="floatingInput">Enter a Message:</label>
+              </div>
+              <button class="btn btn-primary col-md-2" id="sendbutton">Send</button>
+            </form>
+        </div>
+      </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script>
+      const username = '<%=locals.uname%>'
+
+    </script>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+
+  </body>
+</html>

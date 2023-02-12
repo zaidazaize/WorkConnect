@@ -1,15 +1,22 @@
 const socket = io()
 
-const form = document.getElementById("message-form")
+
+const form = document.getElementById("chatform")
 // const message = document.getElementById("message")
-const messagecontainer = document.getElementById("message-container")
-const messageinp = document.getElementById("messageinp")
+const messagecontainer = document.getElementById("chats")
+const messageinp = document.getElementById("message")
 
 function appendMessage(message, position, color){
         messageelement = document.createElement('div')
         messageelement.innerText = message
         messageelement.classList.add("message")
+        messageelement.classList.add("h6")
+        messageelement.classList.add("text-dark")
+        messageelement.classList.add("p-2")
+        messageelement.classList.add("my-2")
         messageelement.classList.add(position)
+        messageelement.classList.add("w-75")
+        messageelement.classList.add("rounded")
         messageelement.style.background = color
         
         messagecontainer.append(messageelement)
@@ -26,7 +33,6 @@ form.addEventListener("submit", (e)=>{
     }
 })
 
-const username = prompt("Enter your name: ");
 
 socket.emit("new-user-joined", username)
 
