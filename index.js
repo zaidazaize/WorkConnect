@@ -116,10 +116,10 @@ works = []
       }else{
         work = works.find(work =>{ return work.client == req.user })
         if(work){
-          context = {uname: req.user.username, room_id: room_id}
+          context = {uname: req.user.username, room_id: room_id, confirm_client:false}
         res.render("chat.ejs", context)
       }else{
-        context = {uname: req.user.username, room_id: ""}
+        context = {uname: req.user.username, room_id: "", confirm_client:false}
         res.render("chat.ejs", context)
       }
     }
