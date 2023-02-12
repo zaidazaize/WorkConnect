@@ -30,7 +30,10 @@
                     <a class="nav-link active" aria-current="page" href="/negotiate"><ion-icon name="notifications-circle-outline" style="font-size: 1.5rem;"></ion-icon></a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#" data-bs-toggle="modal" data-bs-target="#worksModal">Your Works(<%= locals.hisworks.length %>)</a>
+                    <a class="nav-link active" aria-current="page" href="#" data-bs-toggle="modal" data-bs-target="#worksModal">Works(<%= locals.hisworks.length %>)</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#" data-bs-toggle="modal" data-bs-target="#activeworksModal">Upcoming Works(<%= locals.activeworks.length %>)</a>
                   </li>
                   
                 </ul>
@@ -86,6 +89,53 @@
                         <form action="/removework" method="post">
                           <input type="hidden" name="remove" value = "<%= locals.hisworks[i].id %>">
                           <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <% } %>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+          <!-- modal for active works -->
+      
+        <!-- Modal -->
+        <div class="modal fade" id="activeworksModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Upcoming Works</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <% for(i=0; i<locals.activeworks.length; i++){ %>
+
+                  <div class="works my-1 p-1">
+                   
+                    <p class="d-flex justify-content-between"><%= locals.activeworks[i].client.username %>: <%= locals.activeworks[i].category %>
+                      <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#collapseExample<%= i %>" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        More
+                      </a>
+                    </p>
+                    <div class="collapse" id="collapseExample<%= i %>">
+                      <div class="card card-body">
+                        <p>
+                          <%= locals.activeworks[i].client.username %>: <%= locals.activeworks[i].category %>
+                        </p>
+                        <p>
+                          Price: <%= locals.activeworks[i].price %>
+                        </p>
+                        <p>
+                          Desc: <%= locals.activeworks[i].desc %>
+                        </p>
+                        <form action="/donework" method="post">
+                          <input type="hidden" name="done" value = "<%= locals.activeworks[i].id %>">
+                          <button type="submit" class="btn btn-success btn-sm">Done</button>
                         </form>
                       </div>
                     </div>
@@ -194,6 +244,10 @@
                         
                         <button class="w-100 btn btn-lg btn-primary my-1" type="submit">Negotiate</button>
                 
+                      </form>
+                      <form action="/confirm" class=" p-2" id = "priceform" method="post">
+                        <input type="hidden" name="confirmwork" value="<%= locals.room_id %>">
+                        <button class="btn btn-success" id="sendbutton" type="submit">Confirm</button>
                       </form>
                     </div>
                     <div class="modal-footer">

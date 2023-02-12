@@ -1,7 +1,7 @@
 const socket = io()
 
 
-const form = document.getElementById("chatform")
+messageform = document.getElementById("chatform")
 // const message = document.getElementById("message")
 const messagecontainer = document.getElementById("chats")
 const messageinp = document.getElementById("message")
@@ -24,7 +24,9 @@ function appendMessage(message, position, color){
         messagecontainer.scrollTop = messagecontainer.scrollHeight
 }
 
-form.addEventListener("submit", (e)=>{
+
+
+messageform.addEventListener("submit", (e)=>{
     e.preventDefault()
     if(messageinp.value != "" && room_id!=""){
         appendMessage(`You: ${messageinp.value}`, "right", "lightblue")
@@ -32,6 +34,7 @@ form.addEventListener("submit", (e)=>{
         messageinp.value = ""
     }
 })
+
 
 if(room_id!=""){
     socket.emit("joinroom", room_id)
