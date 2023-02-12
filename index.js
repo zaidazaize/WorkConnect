@@ -95,6 +95,13 @@ works = []
   })
 
 
+  app.post("/confirm", checkAuthenticatedWorker, (req, res)=>{
+      work = works.find(work =>{ return work.worker == req.user })
+      work.status = "confirmed"
+      work.room_id = ""
+      res.redirect("/workerdashboard")
+  })
+
   app.get("/negotiate", checkAuthenticated, (req, res) =>{
       // room_id = ""
       if(req.user.role == 'worker'){
@@ -102,11 +109,17 @@ works = []
         if(work){
           context = {uname: req.user.username, room_id: work.room_id}
           res.render("chat.ejs", context)
+        }else{
+          context = {uname: req.user.username, room_id: ""}
+          res.render("chat.ejs", context)
         }
       }else{
         work = works.find(work =>{ return work.client == req.user })
         if(work){
           context = {uname: req.user.username, room_id: room_id}
+        res.render("chat.ejs", context)
+      }else{
+        context = {uname: req.user.username, room_id: ""}
         res.render("chat.ejs", context)
       }
     }
@@ -135,6 +148,13 @@ works = []
     toremove = works.find(work =>{return work.id == req.body.remove })
     toremove.worker = {}
     toremove.status = ""
+    toremove.room_id = ""
+    res.redirect("/workerdashboard")
+  })
+
+  app.post("/donework", checkAuthenticatedWorker, (req, res) =>{
+    toremove = works.find(work =>{return work.id == req.body.done })
+    toremove.status = "done"
     toremove.rood_id = ""
     res.redirect("/workerdashboard")
   })
@@ -151,7 +171,7 @@ works = []
     work.status = "pending"
     room_id = uuidv4()
     work.room_id = room_id
-    console.log(work)
+    
     res.redirect("/workerdashboard")
   })
 
@@ -168,7 +188,8 @@ works = []
       return work.status == ""
     })
     hisworks = works.filter(work => {return (work.worker == req.user) & (work.status == "pending") })
-    context ={works: activeworks, workeruname: req.user.username, mob: req.user.mobile, hisworks:hisworks}
+    hisactiveworks = works.filter(work => {return (work.worker == req.user) & (work.status == "confirmed") })
+    context ={works: activeworks, workeruname: req.user.username, mob: req.user.mobile, hisworks:hisworks, activeworks:hisactiveworks}
 
     res.render("workerdashboard.ejs", context)
   })

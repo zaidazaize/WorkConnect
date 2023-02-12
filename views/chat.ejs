@@ -17,7 +17,7 @@
     <div class="container-fluid p-2 bg-dark h-100">
         <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary sticky-top" data-bs-theme="dark">
             <div class="container-fluid">
-              <a class="navbar-brand" href="/">WorkConnect</a>
+              <a class="navbar-brand" href="/negotiate">Negotiation Window</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -36,25 +36,31 @@
                   </li>
                   
                 </ul>
-                
+               
               </div>
             </div>
           </nav>
 
 <!-- chat app -->
       <div class="chatcontainer container-sm py-2 bg-light my-3 rounded d-flex flex-column">
-        <div class="header bg-primary p-2 rounded-top text-center text-light h4">Negotiation Window</div>
         <div class="chats container bg-secondary p-2 mt-2" id="chats">
 
         </div>
-        <div class="sendform">
-            <form action="#" class="row p-2" id = "chatform">
-              <div class="form-floating col-md-10">
-                <input type="text" class="form-control my-1" name = "message" id = "message" placeholder="Enter a message">
-                <label for="floatingInput">Enter a Message:</label>
+        <div class="sendform row">
+            <form action="#" class="row p-2 " id = "chatform">
+              <div class="sendmessage">
+                <div class="form-floating">
+                  <input type="text" class="form-control my-1" name = "message" id = "message" placeholder="Enter a message">
+                  <label for="floatingInput">Enter a Message:</label>
+                </div>
+                <button class="btn btn-primary" id="sendbutton">Send Message</button>
               </div>
-              <button class="btn btn-primary col-md-2" id="sendbutton">Send</button>
             </form>
+            <form action="/confirm" class=" p-2" id = "priceform" method="post">
+              <input type="hidden" name="confirmwork" value="<%= locals.room_id %>">
+              <button class="btn btn-success" id="sendbutton" type="submit">Confirm</button>
+            </form>
+          </div>
         </div>
       </div>
 
