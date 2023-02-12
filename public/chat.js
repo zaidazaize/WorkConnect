@@ -28,10 +28,15 @@ function appendMessage(message, position, color){
 
 messageform.addEventListener("submit", (e)=>{
     e.preventDefault()
+    if(room_id == ""){
+        document.getElementById("firstadd").innerText = "Your works have not been accepted by any worker!"
+    }
     if(messageinp.value != "" && room_id!=""){
         appendMessage(`You: ${messageinp.value}`, "right", "lightblue")
         socket.emit('send', messageinp.value, username, room_id)
         messageinp.value = ""
+        document.getElementById("firstadd").innerText = "Your works have not been accepted by any worker/client!"
+
     }
 })
 
