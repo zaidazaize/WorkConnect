@@ -26,22 +26,25 @@ function appendMessage(message, position, color){
 
 form.addEventListener("submit", (e)=>{
     e.preventDefault()
-    if(messageinp.value != ""){
+    if(messageinp.value != "" && room_id!=""){
         appendMessage(`You: ${messageinp.value}`, "right", "lightblue")
-        socket.emit('send', messageinp.value)
+        socket.emit('send', messageinp.value, username, room_id)
         messageinp.value = ""
     }
 })
 
+if(room_id!=""){
+    socket.emit("joinroom", room_id)
+}
 
-socket.emit("new-user-joined", username)
+// socket.to(room_id).emit("new-user-joined", username, room_id)
 
 socket.on("recieve", data =>{
     appendMessage(`${data.name}: ${data.message}`, "left", "cyan")
 })
-socket.on("user-joined", name =>{
-    appendMessage(`${name} joined the chat`, "left", "lightgreen")
-})
-socket.on("user-left", name =>{
-    appendMessage(`${name} left the chat`, "left", "orangered")
-})
+// socket.on("user-joined", name =>{
+//     appendMessage(`${name} joined the chat`, "left", "lightgreen")
+// })
+// socket.on("user-left", name =>{
+//     appendMessage(`${name} left the chat`, "left", "orangered")
+// })
