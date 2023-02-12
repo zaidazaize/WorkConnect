@@ -1,0 +1,24 @@
+.chats {
+    overflow: scroll;
+    max-height:100%;
+    height:100%
+}
+.chatcontainer{
+    width: 70%;
+    height: 85%;
+ }
+@media screen and (max-width: 576px){
+    .chatcontainer{
+       width: 100%;
+    }
+}
+
+.right{
+    text-align: right;
+    float: right;
+}
+
+.left{
+    text-align: left;
+    float:left;
+}

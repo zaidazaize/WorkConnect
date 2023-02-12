@@ -8,7 +8,6 @@
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script defer src="/socket.io/socket.io.js"></script>
-    <script defer src="/client_dash.js"></script>
   </head>
   
   <body style="height:100vh">    
@@ -32,7 +31,7 @@
                   </li>
                   
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#"><ion-icon name="notifications-circle-outline" style="font-size: 1.5rem;"></ion-icon></a>
+                    <a class="nav-link active" aria-current="page" href="/negotiate"><ion-icon name="notifications-circle-outline" style="font-size: 1.5rem;"></ion-icon></a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#" data-bs-toggle="modal" data-bs-target="#worksModal">Active Works(<%= locals.hisworks.length %>)</a>
@@ -55,6 +54,7 @@
             </div>
           </nav>
 
+<!-- chat app -->
 
           <!-- modal for works -->
           <div class="modal fade" id="worksModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

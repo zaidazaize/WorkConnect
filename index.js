@@ -94,6 +94,12 @@ works = []
   })
 
 
+  app.get("/negotiate", checkAuthenticated, (req, res) =>{
+    context = {uname: req.user.username}
+
+    res.render("chat.ejs", context)
+  })
+
   app.post("/addwork", checkAuthenticatedClient, (req, res)=>{
     works.push(
       {
@@ -225,6 +231,13 @@ works = []
   
   function checkAuthenticatedWorker(req, res, next) {
     if (req.isAuthenticated() && req.user.role =="worker") {
+      return next()
+    }
+  
+    res.redirect('/')
+  }
+  function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
       return next()
     }
   
